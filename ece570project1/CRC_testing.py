@@ -1,0 +1,3 @@
+import CRC
+
+print CRC.ComputeCRC([0x2,0x8d,0x14],0b110101)
