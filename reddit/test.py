@@ -1,39 +1,36 @@
 import pdb
-import csv
+import heapq
+import membership
+import cluster_aff
+from operator import itemgetter
 
-f_usr = open('affinities.clabel','r')
-f_clust = open('clusters','r')
-f_aff = open('my_publicvotes-20101018_affinities.dump')
+N_LARGEST = 10
+ACC_THRESHOLD = 0.5
 
-aff_reader = csv.reader(f_aff,delimiter='\t')
+memberships = membership.build_membership('affinities.clabel','clusters')
 
-usr = f_usr.readlines()
+clusters = cluster_aff.sum_cluster_affinities(memberships, 'my_publicvotes-20101018_affinities.dump')
 
-memberships = {}
-i = 0
-for line in f_clust:
-	memberships[usr[i][:-1]] = line[:-1]
-	i+=1
+largest = heapq.nlargest(N_LARGEST, clusters[1].iteritems(),itemgetter(1))
 
-clusters = {}
-for row in aff_reader:
-	user_id = row[0]
-	sr_id = row[1]
-	affinity = float(row[2])
-	try:
-		c_id = int(memberships[user_id])
-		try:
-			#this will only work if the cluster_ID,sr_id exists
-			clusters[c_id][sr_id] += affinity
-		except KeyError:
-			#either that cluster id or the sr_id didn't exist,
-			#so we must initialize it
-			try:
-				clusters[c_id][sr_id] = affinity
-			except KeyError:
-				#this must be the first time we'ved seen the cluster_id		
-				clusters[c_id] = { sr_id : affinity } 
-	except KeyError:
- 		print user_id
+#this chunk will give all the UIDs of a particular cluster
+#need to figure out a way of testing if the members of the cluster really
+# like the most popular subreddits of that cluster
+cluster_members = []
+for c_member in memberships:
+	if memberships[c_member] == '1':
+		cluster_members.append(c_member)
+
+#this code needs to be redone:
+#for subreddit in largest:	
+#	good = 0
+#	fail = 0
+#	for user in cluster_members:
+#		pdb.set_trace()
+#		if memberships[user][subreddit] > THRESHOLD:
+#			good += 1
+#		else:
+#			fail += 1
+#print "For subreddit", subreddit, good, "passes and", fail, "fails"	
 
 pdb.set_trace()
