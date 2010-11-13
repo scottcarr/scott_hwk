@@ -16,21 +16,12 @@ largest = heapq.nlargest(N_LARGEST, clusters[1].iteritems(),itemgetter(1))
 #this chunk will give all the UIDs of a particular cluster
 #need to figure out a way of testing if the members of the cluster really
 # like the most popular subreddits of that cluster
-cluster_members = []
+cluster_members = {}
+c_id = '1'
 for c_member in memberships:
-	if memberships[c_member] == '1':
-		cluster_members.append(c_member)
+	if memberships[c_member] == c_id:
+		cluster_members[c_member] = { 'good' : 0, 'bad' : 0, 'belongs' : 1 }
+		
 
-#this code needs to be redone:
-#for subreddit in largest:	
-#	good = 0
-#	fail = 0
-#	for user in cluster_members:
-#		pdb.set_trace()
-#		if memberships[user][subreddit] > THRESHOLD:
-#			good += 1
-#		else:
-#			fail += 1
-#print "For subreddit", subreddit, good, "passes and", fail, "fails"	
+cluster_aff.find_affs_in_cluster(cluster_members, largest, 'my_publicvotes-20101018_affinities.dump',ACC_THRESHOLD)
 
-pdb.set_trace()

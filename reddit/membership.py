@@ -10,4 +10,6 @@ def build_membership(usr_filename,clust_filename):
 	for line in f_clust:
 		memberships[usr[i][:-1]] = line[:-1]
 		i+=1
+	f_usr.close()
+	f_clust.close()
 	return memberships
