@@ -1,6 +1,9 @@
+#!/usr/bin/python
 import Image
 import random
 import matplotlib.pyplot as plt
+import pdb
+
 
 def find_zeros_and_ones(mylist):
     my_zeros = []
@@ -39,6 +42,7 @@ Lsx=100
 Lsy=100
 Ldx=450
 Ldy=450
+
 
 my_map = Image.open('localmap.gif')
 map_list = list(my_map.getdata())
