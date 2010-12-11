@@ -4,7 +4,6 @@ import random
 import matplotlib.pyplot as plt
 import pdb
 
-
 def find_zeros_and_ones(mylist):
     my_zeros = []
 
@@ -51,7 +50,25 @@ zeros_list = find_zeros_and_ones(map_list)
 
 x_coords, y_coords = transform_indexes(zeros_list, my_map.size[0])
 
-plt.scatter(x_coords, y_coords)
+xy_pairs = range(len(x_coords))
+
+for i in range(len(x_coords)):
+	xy_pairs[i] = (x_coords[i], y_coords[i])
+
+vehicles = random.sample(xy_pairs, Nv)
+
+vehicles_x = []
+vehicles_y = []
+for pair in vehicles:
+	vehicles_x.append(pair[0])
+	vehicles_y.append(pair[1])
+
+plt.scatter(vehicles_x, vehicles_y, marker = 'o')
+plt.scatter(x_coords, y_coords, s = 1)
+plt.scatter(Lsx, Lsy, marker = '^', color = 'r')
+plt.scatter(Ldx, Ldy, marker = '^', color = 'r')
+plt.annotate('source', (Lsx, Lsy))
+plt.annotate('destination', (Ldx, Ldy))
 plt.show()
 
 #Generate randon distribution of vehicles.
