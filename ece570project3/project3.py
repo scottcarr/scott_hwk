@@ -41,17 +41,24 @@ def return_vehicles_in_range(this_vehicle,vehicles, s_range):
 
 	vehicles_in_range = []
 	for vehicle in vehicles:
-		if (vehicle[0] <= this_vehicle[0] + s_range / 2) and (vehicle[0] >=this_vehicle[0] - s_range / 2):
-			if (vehicle[1] <= this_vehicle[1] + s_range / 2) and (vehicle[1] >= this_vehicle[1] - s_range / 2):
- 				vehicles_in_range.append(vehicle)
+ 		if is_within_range(vehicles[0], vehicles[1], this_vehicle[0], this_vehicle[1], s_range):		
+			vehicles_in_range.append(vehicle)
 	return vehicles_in_range
+
+def is_within_range(x1, y1, x2, y2, s_range):
+	
+	if (x1 <= x2 + s_range /2 ) and (x1 >= x2 - s_range / 2) and (y1 <= s_range /2) and (y1 >= y2 - s_range /2):
+		return True
+	else:
+		return False
+
 
 Nv=200 #Number of vehicles
 Lsx=100
 Lsy=100
 Ldx=450
 Ldy=450
-
+s_range = 40
 
 my_map = Image.open('localmap.gif')
 map_list = list(my_map.getdata())
@@ -73,7 +80,6 @@ for pair in vehicles:
 	vehicles_x.append(pair[0])
 	vehicles_y.append(pair[1])
 
-
 G = nx.Graph()
 
 for vehicle in vehicles:
@@ -86,14 +92,12 @@ for vehicle in vehicles:
 	G.node[name]['y'] = v_y
 	G.nodes(data=True)
 
-s_range = 40
-
 G.add_node('source', x = Lsx, y = Lsy)
 G.add_node('destination', x = Ldx, y = Ldy)
 
 for node in vehicles:
 	for other_node in vehicles:
-		if (node[0] >= other_node[0] - s_range/2) and (node[0] <= other_node[0] + s_range/2) and (node[1] >= other_node[1] - s_range/2) and (node[1] <= other_node[1] + s_range/2):
+		if is_within_range(node[0], node[1], other_node[0], other_node[1], s_range):	
 			name1 = node
 			name1 = str(node[0])
 			name1 += str(node[1])
@@ -104,8 +108,19 @@ for node in vehicles:
 				G.add_edge(name1, name2)
 
 #need to add code to add source and destination edges to graph
+for vehicle in vehicles:
+	if is_within_range(vehicle[0], vehicle[1], Lsx, Lsy, s_range):
+		name1 = vehicle
+		name1 = str(vehicle[0])
+		name1 += str(vehicle[1])
+		G.add_edge('source', name1)
 
-pdb.set_trace()
+for vehicle in vehicles:
+	if is_within_range(vehicle[0], vehicle[1], Ldx, Ldy, s_range):
+		name1 = vehicle
+		name1 = str(vehicle[0])
+		name1 += str(vehicle[1])
+		G.add_edge('destination', name1)
 
 plt.scatter(vehicles_x, vehicles_y, marker = 'o')
 plt.scatter(x_coords, y_coords, s = 1)
