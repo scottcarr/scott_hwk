@@ -47,18 +47,19 @@ def return_vehicles_in_range(this_vehicle,vehicles, s_range):
 
 def is_within_range(x1, y1, x2, y2, s_range):
 	
-	if (x1 <= x2 + s_range /2 ) and (x1 >= x2 - s_range / 2) and (y1 <= s_range /2) and (y1 >= y2 - s_range /2):
+	if (x1 <= x2 + s_range /2 ) and (x1 >= x2 - s_range / 2) and (y1 <= y2 + s_range /2) and (y1 >= y2 - s_range /2):
 		return True
 	else:
 		return False
-
+def get_node_attr(Graph, node_name, attr_name):
+	return Graph.nodes(data=True)[Graph.nodes().index(node_name)][1][attr_name]
 
 Nv=200 #Number of vehicles
 Lsx=100
 Lsy=100
 Ldx=450
 Ldy=450
-s_range = 40
+s_range = 125
 
 my_map = Image.open('localmap.gif')
 map_list = list(my_map.getdata())
@@ -107,7 +108,6 @@ for node in vehicles:
 			if name1 != name2:
 				G.add_edge(name1, name2)
 
-#need to add code to add source and destination edges to graph
 for vehicle in vehicles:
 	if is_within_range(vehicle[0], vehicle[1], Lsx, Lsy, s_range):
 		name1 = vehicle
@@ -121,6 +121,9 @@ for vehicle in vehicles:
 		name1 = str(vehicle[0])
 		name1 += str(vehicle[1])
 		G.add_edge('destination', name1)
+		
+path = nx.shortest_path(G, source = 'source', target = 'destination')
+
 
 plt.scatter(vehicles_x, vehicles_y, marker = 'o')
 plt.scatter(x_coords, y_coords, s = 1)
@@ -128,6 +131,10 @@ plt.scatter(Lsx, Lsy, marker = '^', color = 'r')
 plt.scatter(Ldx, Ldy, marker = '^', color = 'r')
 plt.annotate('source', (Lsx, Lsy))
 plt.annotate('destination', (Ldx, Ldy))
+
+for vehicle in path:
+	plt.scatter(get_node_attr(G, vehicle, 'x'), get_node_attr(G,vehicle,'y'), marker='h', color = 'r')
+
 plt.show()
 
 
